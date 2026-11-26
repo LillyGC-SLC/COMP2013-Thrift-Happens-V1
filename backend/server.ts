@@ -18,8 +18,8 @@ server.use(cors());
 
 //Connect to DB and start the server
 
-if(!MONGO_URI){
-    throw new Error("Mongo URI is not found in .env file");
+if (!MONGO_URI) {
+  throw new Error("Mongo URI is not found in .env file");
 }
 mongoose.connect(MONGO_URI).then(() =>
   server.listen(port, () => {
@@ -30,17 +30,57 @@ mongoose.connect(MONGO_URI).then(() =>
 //Routes
 //Root Route
 server.get("/", (request, response) => {
-    response.send("Server is Live");
+  response.send("Server is Live");
 });
 
 //GET data api route
 server.get("/data", async (request, response) => {
-    try{ 
-        const data = await ClothesItem.find();
-        response.status(200).send(data);
-    } catch (error) 
-    {
-        console.log(error);
-        response.status(500).send(error);
-    }
+  try {
+    const data = await ClothesItem.find();
+    response.status(200).send(data);
+  } catch (error) {
+    console.log(error);
+    response.status(500).send(error);
+  }
+});
+
+//POST route to add a clothing item to the DB
+server.post("/data", async (request, response) => {
+  const {
+    id,
+    name,
+    image,
+    fit,
+    category,
+    size,
+    color,
+    description,
+    price,
+    quantity,
+    itemQuantity,
+  } = request.body;
+  const newArticle = new ClothesItem({
+    id,
+    name,
+    image,
+    fit,
+    category,
+    size,
+    color,
+    description,
+    price,
+    quantity,
+    itemQuantity,
+  });
+  try {
+    await newArticle.save();
+    response
+      .status(201)
+      .send({
+        message: `The new item with id ${id} has been added successfully`,
+      });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send(error);
+  }
 });
