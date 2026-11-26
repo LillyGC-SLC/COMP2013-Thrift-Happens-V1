@@ -13,6 +13,7 @@ const clothingSize: ClothingSize[] = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export default function FormComponent({
   clothesArticle,
+  responseMessage,
   handleOnSubmit,
   handleOnChange,
 }: FormComponentProps) {
@@ -118,6 +119,7 @@ export default function FormComponent({
         />
         <button>Submit</button>
       </form>
+      <p>{responseMessage}</p>
     </div>
   );
 }
