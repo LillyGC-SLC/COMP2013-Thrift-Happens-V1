@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import type { ClothingProduct } from "../data/data";
 import ItemsContainer from "./ItemsContainer";
 import NavBar from "./NavBar";
@@ -48,16 +49,46 @@ export interface CheckoutContainerProps {
   handleEmptyCheckout: () => void;
 }
 
-export default function ThriftHappensApp({ products }: ThriftHappensAppProps) {
-  const [itemsQuantity, setItemsQuantity] = useState<ItemsQuantity[]>(
-    products.map((prod) => ({
-      id: prod.id,
-      userQuantity: 0,
-      remainQuantity: prod.quantity,
-    })),
-  );
+export default function ThriftHappensApp() {
+  const [products, setProducts] = useState<ClothingProduct[]>([]);
+  const [itemsQuantity, setItemsQuantity] = useState<ItemsQuantity[]>([]);
 
   const [checkoutItems, setCheckoutItems] = useState<CheckoutItem[]>([]);
+
+  async function getProductsFromDB() {
+    try {
+      const { data } = await axios.get("http://localhost:3000/data");
+      setProducts(data);
+      setItemsQuantity(
+        data.map((product: ClothingProduct) => ({
+          id: product.id,
+          userQuantity: 0,
+          remainQuantity: product.quantity,
+        })),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    async function getProductsFromDB() {
+      try {
+        const { data } = await axios.get("http://localhost:3000/data");
+        setProducts(data);
+        setItemsQuantity(
+          data.map((product: ClothingProduct) => ({
+            id: product.id,
+            userQuantity: 0,
+            remainQuantity: product.quantity,
+          })),
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getProductsFromDB();
+  }, []);
 
   function handleAdjustQuantityCounter(
     id: number,
