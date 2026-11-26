@@ -26,6 +26,7 @@ export interface ItemsContainerProps {
     userQuantity: number,
     price: number,
   ) => void;
+  handleDeleteItem: (id: number) => void;
 }
 
 export interface ItemsQuantity {
@@ -81,7 +82,9 @@ export default function ThriftHappensApp() {
   async function getProductsFromDB() {
     try {
       const { data } = await axios.get("http://localhost:3000/data");
-      setProducts(data.sort((a: ClothingProduct, b: ClothingProduct) => b.id - a.id));
+      setProducts(
+        data.sort((a: ClothingProduct, b: ClothingProduct) => b.id - a.id),
+      );
       setItemsQuantity(
         data.map((product: ClothingProduct) => ({
           id: product.id,
@@ -98,7 +101,9 @@ export default function ThriftHappensApp() {
     async function getProductsFromDB() {
       try {
         const { data } = await axios.get("http://localhost:3000/data");
-        setProducts(data.sort((a: ClothingProduct, b: ClothingProduct) => b.id - a.id));
+        setProducts(
+          data.sort((a: ClothingProduct, b: ClothingProduct) => b.id - a.id),
+        );
         setItemsQuantity(
           data.map((product: ClothingProduct) => ({
             id: product.id,
@@ -225,27 +230,40 @@ export default function ThriftHappensApp() {
     // use the POST route to create a new clothing article
     if (clothesArticle.id === -1) {
       try {
-        await axios.post("http://localhost:3000/data", 
-          {...clothesArticle, 
-           id: parseInt((Math.random() * 10000 + 50).toFixed(0)),
-          }).then((response) => setResponseMessage(response.data.message));
-          await getProductsFromDB();
-          setClothesArticle({
-            id: -1,
-            name: "",
-            image: "",
-            fit: "men",
-            category: "hoodie",
-            size: "M",
-            color: "",
-            description: "",
-            price: 0,
-            quantity: 0,
-            itemQuantity: 0,
-          });
+        await axios
+          .post("http://localhost:3000/data", {
+            ...clothesArticle,
+            id: parseInt((Math.random() * 10000 + 50).toFixed(0)),
+          })
+          .then((response) => setResponseMessage(response.data.message));
+        await getProductsFromDB();
+        setClothesArticle({
+          id: -1,
+          name: "",
+          image: "",
+          fit: "men",
+          category: "hoodie",
+          size: "M",
+          color: "",
+          description: "",
+          price: 0,
+          quantity: 0,
+          itemQuantity: 0,
+        });
       } catch (error) {
         console.log(error);
       }
+    }
+  }
+
+  async function handleDeleteItem(id: number) {
+    try {
+      await axios
+        .delete(`http://localhost:3000/data/${id}`)
+        .then((response) => setResponseMessage(response.data.message))
+        .then(() => getProductsFromDB());
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -258,6 +276,7 @@ export default function ThriftHappensApp() {
           itemsQuantity={itemsQuantity}
           handleAdjustQuantityCounter={handleAdjustQuantityCounter}
           handleAddToCheckout={handleAddToCheckout}
+          handleDeleteItem={handleDeleteItem}
         />
         <CheckoutContainer
           checkoutItems={checkoutItems}
