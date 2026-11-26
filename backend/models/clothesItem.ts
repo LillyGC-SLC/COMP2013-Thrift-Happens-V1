@@ -51,4 +51,4 @@ const clothesItemSchema = new mongoose.Schema({
 });
 
 //export the model
-export default mongoose.model("ClothesItem", clothesItemSchema, "clothesItem");
+export default mongoose.model("ClothesItem", clothesItemSchema, "clothesItems");

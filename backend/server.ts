@@ -4,7 +4,7 @@ import express, { type Express } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import "dotenv/config";
-import clothesItem from "./models/clothesItem";
+import ClothesItem from "./models/clothesItem";
 
 //Constants Variable
 const server: Express = express();
@@ -23,6 +23,24 @@ if(!MONGO_URI){
 }
 mongoose.connect(MONGO_URI).then(() =>
   server.listen(port, () => {
-    console.log(`Connected to DB\nServer is listening on port $(port)`);
+    console.log(`Connected to DB\nServer is listening on port ${port}`);
   }),
 );
+
+//Routes
+//Root Route
+server.get("/", (request, response) => {
+    response.send("Server is Live");
+});
+
+//GET data api route
+server.get("/data", async (request, response) => {
+    try{ 
+        const data = await ClothesItem.find();
+        response.status(200).send(data);
+    } catch (error) 
+    {
+        console.log(error);
+        response.status(500).send(error);
+    }
+});
