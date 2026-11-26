@@ -73,6 +73,10 @@ export default function ItemCard({
           {remainQuantity > 0 ? `Add to Checkout` : `Out of Stock`}
         </button>
       </div>
+      <div>
+        <button>Edit</button>
+        <button>Delete</button>
+      </div>
     </div>
   );
 }
